@@ -19,6 +19,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(bodyParser.json())
 app.use(session({
   secret: "Some secret string",
   resave: false,
@@ -58,7 +59,12 @@ const memberSchema = new mongoose.Schema({
   year_of_birth: Number,
   introduction: String,
   if_deceased: String,
-  date_deceased: String
+  date_deceased: String,
+  img:
+  {
+    data: Buffer,
+    contentType: String
+  }
 })
 
 var dates = [];
@@ -152,6 +158,8 @@ app.get("/login", function (req, res) {
 
 
 app.get("/profile", function (req, res) {
+
+
   if (req.isAuthenticated()) {
     User.findById({ _id: req.user._id }, function (err, foundUser) {
       if (err) {
@@ -339,6 +347,56 @@ app.post("/adminsearch", function (req, res) {
   })
 
 })
+
+
+var fs = require('fs');
+var path = require('path');
+const sharp = require('sharp');
+const multer = require('multer');
+
+var storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads')
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now())
+  }
+});
+
+var upload = multer({ storage: storage });
+
+app.post('/imageupload', upload.single('image'), (req, res, next) => {
+
+  sharp(__dirname + '/public/uploads/' + req.file.filename).resize(150, 150)
+    .png({ quality: 100 }).toFile(__dirname
+      + '/public/uploads/' + req.file.filename + '-thumb');
+
+  setTimeout(() => {
+
+
+    Member.findOneAndUpdate({ sabhe_id: req.body.sabhe_id },
+      {
+        img: {
+          data: fs.readFileSync(path.join(__dirname + '/public/uploads/' + req.file.filename + '-thumb')),
+          contentType: 'image/png'
+        }
+      }
+      , function (err) {
+        if (err) {
+          console.log(err);
+        }
+
+        else {
+          res.redirect("/profile")
+        }
+
+      }
+    )
+
+  }, 3000)
+
+
+});
 
 app.post("/register", function (req, res) {
 

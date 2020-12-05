@@ -13,11 +13,32 @@
                     <h5 class="myh5">Please look into your membership details below and update the same if any change is needed</h5>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <img class="brand_logo" style="margin:10px;"src="images/photo.jpg">
+                    <% if(!member_details.img.data) { %>
+                    <img class="brand_logo" style="margin:10px;" src="images/photo.jpg">
+                    <% } else { %>
+                    <img class="brand_logo" style="margin:10px;" src="data:image/<%=member_details.img.contentType%>;base64,
+                     <%=member_details.img.data.toString('base64')%>">
+                     <% } %>
                 </div>
+                
                 <div class="d-flex justify-content-center">
                     <h5 style="font-family: 'Hind Vadodara';">Name: <span class="colorspan"><%=  member_details.title+". "+member_details.fullname %></span></h5>
                 </div>
+                <div class="d-flex justify-content-center">
+                     <form action="/imageupload" method="POST" enctype="multipart/form-data">           
+                            <div>
+                             <label style="text-align: left;" for="image">Upload your photo:</label>
+                             <div class="input-group mb-3">
+                             <input type="file" id="image" name="image" value="" required>
+                             <input type="hidden" name="sabhe_id" value="<%=member_details.sabhe_id %>">
+                             </div>
+                            </div>
+                            <div class="d-flex justify-content-center my-4 login_container" >
+                            <button class="btn login_btn" style="width:70%" type="submit">Upload</button>
+                            </div>
+                    </form>
+                </div>
+                
                 <div class="d-flex justify-content-left">
                     <p style="font-family: 'Hind Vadodara';"> Membership Number: <span class="colorspan"><%=  member_details.sabhe_id %></span></p>
                 </div>
