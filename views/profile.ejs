@@ -1,0 +1,139 @@
+<%- include('partials/header') %>
+<h1 class="myheading"> Mysuru Mulakanadu Sabha®</h1>
+<% if(member_details.date_of_birth) { var dob = member_details.date_of_birth+" "+member_details.month_of_birth+" "+member_details.year_of_birth; %>
+<% } else { var dob="" } %>
+
+<h2 class="myh2">Sabha Profile section</h2>
+	<div class="container-fluid">
+		<div class="d-flex row justify-content-center">
+            <div style="width: 400px;" class="user_card mx-5 px-3">
+
+        <% if(ifUpdate===false) { %>
+                <div class="d-flex justify-content-center">
+                    <h5 class="myh5">Please look into your membership details below and update the same if any change is needed</h5>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <img class="brand_logo" style="margin:10px;"src="images/photo.jpg">
+                </div>
+                <div class="d-flex justify-content-center">
+                    <h5 style="font-family: 'Hind Vadodara';">Name: <span class="colorspan"><%=  member_details.title+". "+member_details.fullname %></span></h5>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Membership Number: <span class="colorspan"><%=  member_details.sabhe_id %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Address: <span class="colorspan"><%=  member_details.address+", "+member_details.city+"-"+member_details.pincode %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Landline: <span class="colorspan"><%=  member_details.landline %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Mobile: <span class="colorspan"><%=  member_details.mobile %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> E-mail id: <span class="colorspan"><%=  member_details.email_id %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Gothra: <span class="colorspan"><%=  member_details.gothra %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Date of birth: <span class="colorspan"><%= dob %></span></p>
+                </div>
+                <div class="d-flex justify-content-left">
+                    <p style="font-family: 'Hind Vadodara';"> Self-introduction: <span class="colorspan"><%= member_details.introduction %></span></p>
+                </div>
+               
+                <div class="d-flex justify-content-center my-4 login_container" >
+				 	  <a style="width: 100%" href="/updateprofile"><button type="button" name="button" class="btn login_btn">Update my profile</button></a>
+                </div>
+                <div class="d-flex justify-content-center my-4 login_container" >
+                <a href="/logout"><button type="button" name="button" class="btn-md">Logout</button></a>
+                </div>
+            </div>
+        <% } else { %>
+                 <div class="d-flex justify-content-center">
+                    <h5 class="myh5">Enter your changes</h5>
+                </div>
+				<div class="d-flex justify-content-center form_container" style="margin-top: 5px;">
+                    <form action="/updateprofile" method="POST" style="width:400px">
+                        <input type="hidden" name="sabhe_id" value="<%=member_details.sabhe_id %>">
+                        <label style="text-align: left;" >Name:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="fullname" value="<%= member_details.fullname %>">
+                        </div>
+                        <label style="text-align: left;" >Address:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="address" value="<%= member_details.address %>">
+                        </div>
+                        <label style="text-align: left;" >City:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="city" value="<%= member_details.city %>">
+                        </div>
+                        <label style="text-align: left;" >Pincode:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="pincode" value="<%= member_details.pincode %>">
+                        </div>
+                        <label style="text-align: left;" >Landline:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="landline" value="<%= member_details.landline %>">
+                        </div>
+                        <label style="text-align: left;" >Mobile:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="mobile" value="<%= member_details.mobile %>">
+                        </div>
+                        <label style="text-align: left;" >E-mail id:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="email_id" value="<%= member_details.email_id %>">
+                        </div>
+                        <label style="text-align: left;" >Gothra:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="gothra" value="<%= member_details.gothra %>">
+                        </div>
+                        <label style="text-align: left;" >Birth date</label>
+						<div class="input-group mb-3">
+                            <select class="form-control" name="date_of_birth">
+                                    <option value="<%=member_details.date_of_birth%>"><%=member_details.date_of_birth%></option>
+                                <% dates.forEach(function(date){ %>
+                                    <option value="<%=date%>"> <%=date%> </option>
+                                <%})%>
+                            </select>
+                        </div>
+                        <label style="text-align: left;" >Birth Month</label>
+						<div class="input-group mb-3">
+                            <select class="form-control" name="month_of_birth">
+                                <option value="<%=member_details.date_of_birth%>"><%=member_details.month_of_birth%></option>
+                                <% months.forEach(function(month){ %>
+                                    <option value="<%=month%>"> <%=month%> </option>
+                                <%})%>
+                            </select>
+                        </div>
+                         <label style="text-align: left;" >Year of birth</label>
+						<div class="input-group mb-3">
+                            <select class="form-control" name="year_of_birth">
+                                <option value="<%=member_details.year_of_birth%>"><%=member_details.year_of_birth%></option>
+                                <% years.forEach(function(year){ %>
+                                    <option value="<%=year%>"> <%=year%> </option>
+                                <%})%>
+                            </select>
+                        </div>
+                        <label style="text-align: left;" >Your self-introduction:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="introduction" value="<%= member_details.introduction %>">
+                        </div>
+							<div class="d-flex justify-content-center my-4 login_container" >
+				 	            <button type="submit" name="button" class="btn login_btn">Update</button>
+                            </div>
+                            <div class="d-flex justify-content-center my-4 login_container" >
+                        <a href="/logout"><button type="button" name="button" class="btn-md">Logout</button></a>
+                    </div>
+                    </form>
+                    
+                </div> 
+                
+                
+	<% } %>
+      </div>
+    </div>
+    <!-- <a style="margin-left:47%; " href="/logout"><button style="margin-top: 20px;" type="button" name="button" class="btn-lg">Logout</button></a> -->
+
+<%- include('partials/footer') %>

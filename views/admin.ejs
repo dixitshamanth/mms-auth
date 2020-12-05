@@ -1,0 +1,107 @@
+<%- include('partials/header') %>
+<h1 class="myheading"> Mysuru Mulakanadu Sabha®</h1>
+<h2 style="padding:5px;" class="myh2">Admin options</h2>
+
+<div class="container-fluid">
+		<div class="d-flex row justify-content-center">
+      <div style="width: 400px;" class="user_card mx-5 px-3">
+        <div class="d-flex justify-content-center">
+        <h5 class="myh5">Search by Name/ Membership number / Address (Use one search key at a time)</h5>
+        </div>
+				
+				<div class="d-flex justify-content-center form_container" style="margin-top: 5px;">
+         
+          <form action="/adminsearch" method="POST" style="width:400px">
+            <label style="text-align: left;" >Name:</label>
+						<div class="input-group mb-3">
+                <input type="text" class="form-control" name="fullname" placeholder="Name as per sabha records">
+            </div>
+            <label style="text-align: left;" >Address:</label>
+						<div class="input-group mb-3">
+                <input type="text" class="form-control" name="address" placeholder="Residential address as per records">
+            </div>
+             <label style="text-align: left;">Membership number: </label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" name="sabhe_id" placeholder="Example: MMS0850">
+            </div>
+						<div class="d-flex justify-content-center my-4 login_container" >
+                         <button style="width:80px;" type="submit" name="button" class="btn login_btn">Search</button>
+                         <a style="margin-left: 10px;" href="/admin"><button type="button" name="button" class="btn login_btn">View all</button></a>
+                         <a style="margin-left: 10px;" href="/logout"><button style="background: cornsilk;" type="button" name="button" class="btn">Logout</button></a>
+            </div>
+               <!-- <div class="d-flex justify-content-center my-4 login_container" >
+              <a href="/admin"><button type="button" name="button" class="btn login_btn">View all</button></a>
+            </div>
+            <div class="d-flex justify-content-center my-4 login_container" >
+                        <a href="/logout"><button type="button" name="button" class="btn-md">Logout</button></a>
+                    </div> -->
+
+                    </form>
+                    
+                    
+				</div>
+      </div>
+    </div>
+  </div>
+<h2 style="padding:20px;" class="myh2">Admin view - Members table below</h2>
+
+
+                    <table style="background-color: #ffda77; " class="table table-bordered justify-content-center table-hover">
+                    <thead style="background-color: #c0392b; color: white; text-align: center;">
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Admin</th>
+                        <th scope="col">Membership Number</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Pincode</th>
+                        <th scope="col">Landline</th>
+                        <th scope="col">Mobile</th>
+                        <th scope="col">E-mail id</th>
+                        <th scope="col">Gothra</th>
+                        <th scope="col">Birth Date</th>
+                        <th scope="col">Birth Month</th>
+                        <th scope="col">Year of birth</th>
+                        <th scope="col">Intro</th>
+                        <th scope="col">If deceased</th>
+                        <th scope="col">Deceased date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% wholeList.forEach(function(member){ %>
+                        <tr>
+                        <th><%=member.sl_no%></th>
+                        <th><span>
+                            <form action="/adminupdate" method="POST">
+                                <input type="hidden" name="sabhe_id" value="<%=member.sabhe_id %>">
+                                 <div class="d-flex justify-content-center login_container" >
+				 	                <button type="submit" name="button" class="btn" style="background-color: green; width: 100%; color: white">Update</button>
+                                 </div>
+                            </form>
+                        </span></th>
+                        <td><%= member.sabhe_id %></td>
+                        <td><%=member.title%></td>
+                        <td><%=member.fullname%></td>
+                        <td><%=member.address%></td>
+                        <td><%=member.city%></td>
+                        <td><%=member.pincode%></td>
+                        <td><%=member.landline%></td>
+                        <td><%=member.mobile%></td>
+                        <td><%=member.email_id%></td>
+                        <td><%=member.gothra%></td>
+                        <td><%=member.date_of_birth%></td>
+                        <td><%=member.month_of_birth%></td>
+                        <td><%=member.year_of_birth%></td>
+                        <td><%=member.introduction%></td>
+                        <td><%=member.if_deceased%></td>
+                        <td><%=member.date_deceased%></td>
+                        </tr>
+                        <%}) %>
+                    </tbody>
+                    </table>
+
+          
+
+<%- include('partials/footer') %>

@@ -1,0 +1,81 @@
+<%- include('partials/header') %>
+<h1 class="myheading"> Mysuru Mulakanadu Sabha®</h1>
+<h2 class="myh2">Identity verification step</h2>
+
+
+
+          <% if(resultName!==""){ %>
+
+    <div class="d-flex row justify-content-center">
+      <div style="width: 400px;" class="user_card mx-5 px-3">
+        <div class="d-flex justify-content-center">
+          <h4 style="text-align: center; font-family: 'Hind Vadodara';">We found a record with the name <span style="color: #c0392b;">"<%=resultName.fullname %>" </span> , please confirm.</h4>
+        </div>
+          <form action="/profile" method="POST">
+            <input type="hidden" name="sabhe_id" value="<%=resultName.sabhe_id %>">
+            <div class="d-flex justify-content-center my-4 login_container" >
+				 	    <button type="submit" name="button" class="btn" style="background-color: green; width: 50%; color: white">Yes,this is me</button>
+            </div>
+            </form>
+            <div class="d-flex justify-content-center my-4 login_container" >
+				 	    <a style="width: 50%" href="/intermediate"><button type="button" name="button" class="btn login_btn">No, search again</button></a>
+            </div>
+            <div class="d-flex justify-content-center my-4 login_container" >
+              <a href="/logout"><button type="button" name="button" class="btn-md">Logout</button></a>
+            </div>
+      </div>
+    </div>
+            
+
+          <% } else{ %>  
+          	<div class="container-fluid">
+		<div class="d-flex row justify-content-center">
+      <div style="width: 400px;" class="user_card mx-5 px-3">
+        <div class="d-flex justify-content-center">
+        <h5 class="myh5">Please provide any of the following details to link with our database</h5>
+        </div>
+				
+				<div class="d-flex justify-content-center form_container" style="margin-top: 5px;">
+         
+          <form action="/intermediate" method="POST" style="width:400px">
+            <label style="text-align: left;" >Name:</label>
+						<div class="input-group mb-3">
+                <input type="text" class="form-control" name="fullname" placeholder="Your name as per sabha records">
+            </div>
+            <label style="text-align: left;" >Door number:</label>
+						<div class="input-group mb-3">
+                <input type="text" class="form-control" name="door" placeholder="Door number of your residence">
+            </div>
+            <label style="text-align: left;" >Address:</label>
+						<div class="input-group mb-3">
+                <input type="text" class="form-control" name="address" placeholder="Your residential address as per records">
+            </div>
+             <label style="text-align: left;">Membership number: </label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" name="sabhe_id" placeholder="Example: MMS0850">
+            </div>
+            <label style="text-align: left;">Mobile number </label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" name="mobile" placeholder="Example: 9876543210">
+            </div>
+						<div class="d-flex justify-content-center my-4 login_container" >
+				 	    <button type="submit" name="button" class="btn login_btn">Verify</button>
+            </div>
+            <div class="d-flex justify-content-center my-4 login_container" >
+              <a href="/logout"><button type="button" name="button" class="btn-md">Logout</button></a>
+            </div>
+
+					</form>
+				</div>
+	
+      </div>
+        
+    </div>
+  </div>
+          <% } %>
+          
+
+          
+
+
+<%- include('partials/footer') %>
