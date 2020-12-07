@@ -30,7 +30,13 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) {
+    console.error(err.message)
+  } else {
+    console.log("Connected to Mongo")
+  }
+});
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
@@ -71,7 +77,6 @@ var dates = [];
 for (i = 1; i <= 31; i++) {
   dates.push(i.toString());
 }
-console.log(dates);
 var years = [];
 for (i = 1930; i <= 2020; i++) {
   years.push(i.toString())
@@ -119,32 +124,6 @@ app.get("/auth/google",
   passport.authenticate('google', { scope: ["profile"] })
 );
 
-app.get("/insertDB", function (req, res) {
-
-  Member.insertMany(members_for_db).then(function () {
-    console.log("Data inserted")  // Success 
-  }).catch(function (error) {
-    console.log(error)      // Failure 
-  });
-
-})
-
-app.get("/insertOne", function (req, res) {
-
-  const newMember = [{
-    "sabhe_id": "MMSupdatetest",
-    "fullname": "updatetest",
-    "address": "updatetest",
-  }]
-
-  Member.insertMany(newMember).then(function () {
-    console.log("Data inserted")  // Success 
-  }).catch(function (error) {
-    console.log(error)      // Failure 
-  });
-
-});
-
 app.get("/auth/google/secrets",
   passport.authenticate('google', { failureRedirect: "/" }),
   function (req, res) {
@@ -158,7 +137,6 @@ app.get("/login", function (req, res) {
 
 
 app.get("/profile", function (req, res) {
-
 
   if (req.isAuthenticated()) {
     User.findById({ _id: req.user._id }, function (err, foundUser) {
@@ -237,11 +215,9 @@ app.get("/updateprofile", function (req, res) {
   else {
     res.redirect("/")
   }
-
 })
 
 app.get("/admin", function (req, res) {
-
 
   Member.find({}, function (err, allUsersList) {
     if (err) {
@@ -256,7 +232,6 @@ app.get("/admin", function (req, res) {
 
     }
   })
-
 
 });
 
@@ -318,7 +293,6 @@ app.post("/adminupdate", function (req, res) {
   })
 })
 
-
 app.post("/adminsearch", function (req, res) {
   var sabhe_id = req.body.sabhe_id;
   var fullname = req.body.fullname;
@@ -335,7 +309,6 @@ app.post("/adminsearch", function (req, res) {
     searchKey = { sabhe_id: new RegExp(sabhe_id, 'i') }
   }
 
-
   Member.find(searchKey, function (err, foundMembers) {
     if (err) {
       res.redirect("/admin")
@@ -347,7 +320,6 @@ app.post("/adminsearch", function (req, res) {
   })
 
 })
-
 
 var fs = require('fs');
 var path = require('path');
@@ -362,40 +334,43 @@ var storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + Date.now())
   }
 });
-
 var upload = multer({ storage: storage });
 
-app.post('/imageupload', upload.single('image'), (req, res, next) => {
+app.post('/imageupload', upload.single('image'), async (req, res, next) => {
 
-  sharp(__dirname + '/public/uploads/' + req.file.filename).resize(150, 150)
+  await sharp(__dirname + '/public/uploads/' + req.file.filename).resize(150, 150)
     .png({ quality: 100 }).toFile(__dirname
       + '/public/uploads/' + req.file.filename + '-thumb');
 
-  setTimeout(() => {
-
-
-    Member.findOneAndUpdate({ sabhe_id: req.body.sabhe_id },
-      {
-        img: {
-          data: fs.readFileSync(path.join(__dirname + '/public/uploads/' + req.file.filename + '-thumb')),
-          contentType: 'image/png'
-        }
+  Member.findOneAndUpdate({ sabhe_id: req.body.sabhe_id },
+    {
+      img: {
+        data: fs.readFileSync(path.join(__dirname + '/public/uploads/' + req.file.filename + '-thumb')),
+        contentType: 'image/png'
       }
-      , function (err) {
-        if (err) {
-          console.log(err);
-        }
-
-        else {
-          res.redirect("/profile")
-        }
-
+    }
+    , function (err) {
+      if (err) {
+        console.log(err);
       }
-    )
+      else {
+        fs.unlink(__dirname + '/public/uploads/' + req.file.filename, (err) => {
+          if (err) {
+            console.error(err)
+            return
+          }
+        });
+        fs.unlink(__dirname + '/public/uploads/' + req.file.filename + '-thumb', (err) => {
+          if (err) {
+            console.error(err)
+            return
+          }
+        });
 
-  }, 3000)
-
-
+        res.redirect("/profile")
+      }
+    }
+  )
 });
 
 app.post("/register", function (req, res) {
