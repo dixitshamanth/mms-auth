@@ -235,6 +235,20 @@ app.get("/admin", function (req, res) {
 
 });
 
+
+app.post("/confirm", function (req, res) {
+  var sabhe_id = req.body.sabhe_id;
+
+  Member.findOne({ sabhe_id: sabhe_id }, function (err, user) {
+    if (err) {
+      console.log(err);
+      res.redirect("/")
+    } else {
+      res.render("confirm", { user: user })
+    }
+  })
+});
+
 app.post("/updateprofile", function (req, res) {
 
   var fullname = req.body.fullname
@@ -379,6 +393,8 @@ app.post("/register", function (req, res) {
   var password2 = req.body.password2;
   var username = req.body.username;
 
+  var namekey = req.body.firstname;
+
   // If password not entered
   if (password1 == '') {
     res.render("home", { iflogin: false, passwordmessage: "Please choose a password" });
@@ -404,7 +420,19 @@ app.post("/register", function (req, res) {
         res.render("home", { iflogin: false, passwordmessage: err.message });
       } else {
         passport.authenticate("local")(req, res, function () {
-          res.redirect("/intermediate")
+          console.log(namekey);
+          Member.find({ fullname: new RegExp(namekey, 'i') }, function (err, searchedUsers) {
+            if (searchedUsers.length !== 0) {
+              res.render("intermediate", { resultName: searchedUsers });
+            }
+            else {
+              console.log(err)
+              console.log(searchedUsers)
+              res.redirect("/intermediate")
+            }
+          })
+
+
         })
       }
     })
@@ -412,26 +440,45 @@ app.post("/register", function (req, res) {
 
 });
 
-app.post("/intermediate", function (req, res) {
-  var nameKey = req.body.fullname;
-  var addressKey = req.body.address;
-  var door = req.body.door;
-  var sabhe_id = req.body.sabhe_id;
-  var mobile = req.body.mobile;
+app.post("/intermediate", function (req, res, next) {
+  // var nameKey = req.body.fullname;
+  // var addressKey = req.body.address;
+  var x = "emptykey"
+  var door = req.body.door === "" ? x : req.body.door;
+  var sabhe_id = req.body.sabhe_id === "" ? x : req.body.sabhe_id;
+  var mobile = req.body.mobile === "" ? x : req.body.mobile;
 
-  console.log(nameKey);
-  //, address: new RegExp(addressKey, 'i')
-  Member.findOne({ fullname: new RegExp(nameKey, 'i') }, function (err, searchedUser) {
-    if (searchedUser) {
-      res.render("intermediate", { resultName: searchedUser });
-      console.log(searchedUser.fullname);
+
+  Member.find({ mobile: new RegExp(mobile, 'i') }, function (err, searchedUsers) {
+    if (searchedUsers.length !== 0) {
+      console.log("inside 1 search")
+      console.log(searchedUsers);
+      res.render("intermediate", { resultName: searchedUsers });
     }
     else {
-      console.log(err)
-      console.log(searchedUser)
-      res.redirect("/intermediate")
+      Member.find({ sabhe_id: new RegExp(sabhe_id, 'i') }, function (err, searchedUsers1) {
+        if (searchedUsers1.length !== 0) {
+          console.log("inside 2 search")
+          console.log(searchedUsers1);
+          res.render("intermediate", { resultName: searchedUsers1 });
+        }
+        else {
+          Member.find({ address: new RegExp(door, 'i') }, function (err, searchedUsers2) {
+            if (searchedUsers2.length !== 0) {
+              console.log("inside 3 search")
+              console.log(searchedUsers2);
+              res.render("intermediate", { resultName: searchedUsers2 });
+              next();
+            }
+            else {
+              res.redirect("/intermediate")
+            }
+          })
+        }
+      })
     }
   })
+
 })
 
 app.post("/profile", function (req, res) {
