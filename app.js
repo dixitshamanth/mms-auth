@@ -363,7 +363,7 @@ const multer = require('multer');
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads')
+    cb(null, __dirname + '/uploads')
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now())
@@ -374,14 +374,14 @@ var upload = multer({ storage: storage });
 app.post('/imageupload', upload.single('image'), async (req, res, next) => {
   console.log("Image post request by " + req.user.username);
 
-  await sharp(__dirname + '/public/uploads/' + req.file.filename).resize(150, 150)
+  await sharp(__dirname + '/uploads/' + req.file.filename).resize(150, 150)
     .png({ quality: 100 }).toFile(__dirname
-      + '/public/uploads/' + req.file.filename + '-thumb');
+      + '/uploads/' + req.file.filename + '-thumb');
 
   Member.findOneAndUpdate({ sabhe_id: req.body.sabhe_id },
     {
       img: {
-        data: fs.readFileSync(path.join(__dirname + '/public/uploads/' + req.file.filename + '-thumb')),
+        data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename + '-thumb')),
         contentType: 'image/png'
       }
     }
@@ -391,13 +391,13 @@ app.post('/imageupload', upload.single('image'), async (req, res, next) => {
       }
       else {
         console.log("Image saved to database " + req.user.username);
-        fs.unlink(__dirname + '/public/uploads/' + req.file.filename, (err) => {
+        fs.unlink(__dirname + '/uploads/' + req.file.filename, (err) => {
           if (err) {
             console.error(err.message);
             return
           }
         });
-        fs.unlink(__dirname + '/public/uploads/' + req.file.filename + '-thumb', (err) => {
+        fs.unlink(__dirname + '/uploads/' + req.file.filename + '-thumb', (err) => {
           if (err) {
             console.error(err.message)
             return
