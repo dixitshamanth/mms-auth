@@ -40,7 +40,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
-  email: String,
+  username: String,
   password: String,
   googleId: String,
   secret: String,
@@ -117,7 +117,8 @@ passport.use(new GoogleStrategy({
 ));
 
 app.get("/", function (req, res) {
-  res.render("home", { iflogin: false, passwordmessage: "" });
+  res.render("home", { iflogin: false, forgot: false, passwordmessage: "" });
+  console.log("Home page")
 });
 
 app.get("/auth/google",
@@ -127,12 +128,14 @@ app.get("/auth/google",
 app.get("/auth/google/secrets",
   passport.authenticate('google', { failureRedirect: "/" }),
   function (req, res) {
-    // Successful authentication, redirect to secrets.
     res.redirect("/googlelogin");
+    console.log("Google login")
   });
 
 app.get("/login", function (req, res) {
-  res.render("home", { iflogin: true, passwordmessage: "" });
+  console.log("Login page")
+  res.render("home", { iflogin: true, forgot: false, passwordmessage: "" });
+
 });
 
 
@@ -142,25 +145,31 @@ app.get("/profile", function (req, res) {
     User.findById({ _id: req.user._id }, function (err, foundUser) {
       if (err) {
         res.send(err);
+        console.log(err.message);
       }
       else {
         console.log(foundUser.sabhe_id);
         Member.findOne({ sabhe_id: foundUser.sabhe_id }, function (err, foundMember) {
           if (err) {
-            res.send("SOME ERROR OCCURED, PLEASE RETRY")
+            res.send("SOME ERROR OCCURED, PLEASE RETRY");
+            console.log(err.message);
           }
           else {
-            console.log(foundMember);
+            console.log("Profile page accessed by " + foundMember.fullname);
             res.render("profile", { member_details: foundMember, ifUpdate: false });
           }
         })
       }
     })
   }
-
   else {
     res.redirect("/")
   }
+})
+
+app.get("/forgot", function (req, res) {
+  console.log("Forgot password accessed")
+  res.render("home", { iflogin: false, forgot: true, passwordmessage: "" })
 })
 
 app.get("/googlelogin", function (req, res) {
@@ -179,6 +188,7 @@ app.get("/googlelogin", function (req, res) {
 
 app.get("/intermediate", function (req, res) {
   if (req.isAuthenticated()) {
+    console.log("Other details verification page accessed by " + req.user.username)
     res.render("intermediate", { resultName: "" });
   }
   else {
@@ -187,6 +197,7 @@ app.get("/intermediate", function (req, res) {
 })
 
 app.get("/logout", function (req, res) {
+  console.log(req.user.username + " Logging out")
   req.logout();
   res.redirect("/login")
 })
@@ -196,22 +207,22 @@ app.get("/updateprofile", function (req, res) {
     User.findById({ _id: req.user._id }, function (err, foundUser) {
       if (err) {
         res.send(err);
+        console.log(err.message);
       }
       else {
-        console.log(foundUser.sabhe_id);
         Member.findOne({ sabhe_id: foundUser.sabhe_id }, function (err, foundMember) {
           if (err) {
             res.send("SOME ERROR OCCURED, PLEASE RETRY")
+            console.log(err.message);
           }
           else {
-            console.log(foundMember);
+            console.log("Update profile section accessed by " + foundMember.fullname);
             res.render("profile", { member_details: foundMember, dates: dates, years: years, months: months, ifUpdate: true });
           }
         })
       }
     })
   }
-
   else {
     res.redirect("/")
   }
@@ -219,11 +230,14 @@ app.get("/updateprofile", function (req, res) {
 
 app.get("/admin", function (req, res) {
 
-  Member.find({}, function (err, allUsersList) {
+  Member.find({}, null, { sort: { sabhe_id: 'ascending' } }, function (err, allUsersList) {
     if (err) {
-      res.send(err)
+      res.send(err);
+      console.log(err.message);
     } else {
+
       if (req.isAuthenticated() && req.user.isAdmin === true) {
+        console.log("Admin page accessed")
         res.render("admin", { wholeList: allUsersList })
       }
       else {
@@ -242,8 +256,10 @@ app.post("/confirm", function (req, res) {
   Member.findOne({ sabhe_id: sabhe_id }, function (err, user) {
     if (err) {
       console.log(err);
+      console.log(err.message);
       res.redirect("/")
     } else {
+      console.log("Confirm page accessed by " + req.user.username);
       res.render("confirm", { user: user })
     }
   })
@@ -283,11 +299,13 @@ app.post("/updateprofile", function (req, res) {
     , function (err) {
       if (err) {
         console.log(err);
+        console.log(err.message);
       }
       if (req.user.isAdmin) {
         res.redirect("/admin")
       }
       else {
+        console.log("Profile updated by " + req.user.username);
         res.redirect("/profile")
       }
     })
@@ -298,16 +316,18 @@ app.post("/adminupdate", function (req, res) {
 
   Member.findOne({ sabhe_id: sabhe_id }, function (err, foundMember) {
     if (err) {
-      res.send("SOME ERROR OCCURED, PLEASE RETRY")
+      res.send("SOME ERROR OCCURED, PLEASE RETRY");
+      console.log(err.message);
     }
     else {
-      console.log(foundMember);
+      console.log("Admin update for " + foundMember.fullname);
       res.render("profile", { member_details: foundMember, dates: dates, years: years, months: months, ifUpdate: true });
     }
   })
 })
 
 app.post("/adminsearch", function (req, res) {
+
   var sabhe_id = req.body.sabhe_id;
   var fullname = req.body.fullname;
   var address = req.body.address;
@@ -325,10 +345,11 @@ app.post("/adminsearch", function (req, res) {
 
   Member.find(searchKey, function (err, foundMembers) {
     if (err) {
-      res.redirect("/admin")
+      res.redirect("/admin");
+      console.log(err.message)
     }
     else {
-      console.log(foundMembers);
+      console.log("Admin searched");
       res.render("admin", { wholeList: foundMembers });
     }
   })
@@ -351,6 +372,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 app.post('/imageupload', upload.single('image'), async (req, res, next) => {
+  console.log("Image post request by " + req.user.username);
 
   await sharp(__dirname + '/public/uploads/' + req.file.filename).resize(150, 150)
     .png({ quality: 100 }).toFile(__dirname
@@ -365,18 +387,19 @@ app.post('/imageupload', upload.single('image'), async (req, res, next) => {
     }
     , function (err) {
       if (err) {
-        console.log(err);
+        console.log(err.message);
       }
       else {
+        console.log("Image saved to database " + req.user.username);
         fs.unlink(__dirname + '/public/uploads/' + req.file.filename, (err) => {
           if (err) {
-            console.error(err)
+            console.error(err.message);
             return
           }
         });
         fs.unlink(__dirname + '/public/uploads/' + req.file.filename + '-thumb', (err) => {
           if (err) {
-            console.error(err)
+            console.error(err.message)
             return
           }
         });
@@ -388,6 +411,7 @@ app.post('/imageupload', upload.single('image'), async (req, res, next) => {
 });
 
 app.post("/register", function (req, res) {
+  console.log("New user register request +" + req.body.username)
 
   var password1 = req.body.password;
   var password2 = req.body.password2;
@@ -420,15 +444,14 @@ app.post("/register", function (req, res) {
         res.render("home", { iflogin: false, passwordmessage: err.message });
       } else {
         passport.authenticate("local")(req, res, function () {
-          console.log(namekey);
+          console.log("New user registered " + req.user.username);
           Member.find({ fullname: new RegExp(namekey, 'i') }, function (err, searchedUsers) {
             if (searchedUsers.length !== 0) {
+              console.log("Intermediate name list page accessed by " + req.user.username);
               res.render("intermediate", { resultName: searchedUsers });
             }
             else {
-              console.log(err)
-              console.log(searchedUsers)
-              res.redirect("/intermediate")
+              res.redirect("/intermediate");
             }
           })
 
@@ -451,22 +474,20 @@ app.post("/intermediate", function (req, res, next) {
 
   Member.find({ mobile: new RegExp(mobile, 'i') }, function (err, searchedUsers) {
     if (searchedUsers.length !== 0) {
-      console.log("inside 1 search")
-      console.log(searchedUsers);
+
+      console.log("Intermediate name list page accessed by " + req.user.username + " with mobile key");
       res.render("intermediate", { resultName: searchedUsers });
     }
     else {
       Member.find({ sabhe_id: new RegExp(sabhe_id, 'i') }, function (err, searchedUsers1) {
         if (searchedUsers1.length !== 0) {
-          console.log("inside 2 search")
-          console.log(searchedUsers1);
+          console.log("Intermediate name list page accessed by " + req.user.username + " with sabhe id key");
           res.render("intermediate", { resultName: searchedUsers1 });
         }
         else {
           Member.find({ address: new RegExp(door, 'i') }, function (err, searchedUsers2) {
             if (searchedUsers2.length !== 0) {
-              console.log("inside 3 search")
-              console.log(searchedUsers2);
+              console.log("Intermediate name list page accessed by " + req.user.username + " with doornumber key");
               res.render("intermediate", { resultName: searchedUsers2 });
               next();
             }
@@ -483,25 +504,26 @@ app.post("/intermediate", function (req, res, next) {
 
 app.post("/profile", function (req, res) {
   const sabhe_id = req.body.sabhe_id;
-  console.log(sabhe_id);
-  console.log(req.user);
 
   User.findByIdAndUpdate(req.user._id, { sabhe_id: sabhe_id }, function (err) {
     if (err) {
-      console.log(err);
+      console.log(err.message);
       res.send("error occured, check console");
     }
     else {
+      console.log("User linked to database " + req.user.username)
       res.redirect("/profile");
     }
   })
 })
 
 app.post('/login', function (req, res, next) {
+  console.log("Login request " + req.body.username);
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err); }
     if (!user) { return res.render("home", { iflogin: true, passwordmessage: "Problem with username/password" }); }
     req.logIn(user, function (err) {
+
       if (err) { return next(err); }
       if (req.user.sabhe_id) {
         return res.redirect("/profile")
@@ -517,10 +539,10 @@ app.post('/login', function (req, res, next) {
     });
   })(req, res, next);
 }, function (err) {
-  console.log(err);
+  if (err) console.log(err.message);
   console.log("PLEASE RETURN TO HOMEPAGE")
 });
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000.");
 });

@@ -12,15 +12,18 @@
 						<img src="images/logo.jpeg" class="brand_logo" alt="Logo">
 					</div>
         		</div>
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center">	
 		<% if(passwordmessage==="") { %>
-		<h4 class="myh4">Login with your credentials</h4>
+			<h4 class="myh4">Login with your credentials</h4>
+		</div>
 		<% } else{ %>  
-		<h6 class="myh4" style="color:red;"><strong><%= passwordmessage %>.</strong></br>Haven't created an account?<a href="/" class="ml-2">Register</a></h6>
-			
-		
+		<h6 class="myh4" style="color:red;"><strong><%= passwordmessage %>.</strong></h6>
+		</div>
 		<% } %>
-        </div>
+		<div class="d-flex justify-content-center">	
+			<h6 class="myh4">Haven't created an account?<a href="/" class="ml-2">Register</a></h6>
+		</div>
+        
 				<div class="d-flex justify-content-center form_container">
          
 					<form action="/login" method="POST">
@@ -28,13 +31,13 @@
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input type="text" name="username" class="form-control input_user" value="" placeholder="username">
+							<input type="text" name="username" class="form-control input_user" value="" placeholder="username" required>
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input type="password" name="password" class="form-control input_pass"  placeholder="password">
+							<input type="password" name="password" class="form-control input_pass"  placeholder="password" required>
             </div>
 						<div class="form-group">
 							<div class="custom-control custom-checkbox">
@@ -42,6 +45,10 @@
 								<label class="custom-control-label" for="customControlInline">Remember me</label>
 							</div>
 						</div>
+						
+						<div class="d-flex justify-content-center links">
+            				<a href="/forgot">Forgot your password?</a>
+          				</div>
 							<div class="d-flex justify-content-center mt-3 login_container">
 				 	<button type="submit" name="button" class="btn login_btn">Login</button>
            </div>
@@ -54,7 +61,32 @@
     </div>
   </div>
 
-  
+<% } else if(forgot){ %>
+
+	
+	<div class="container-fluid">
+		<div class="d-flex justify-content-center">
+			<div class="user_card mt-5 mx-5 px-3">
+				<div class="d-flex justify-content-center">
+					<div class="brand_logo_container">
+						<img src="images/logo.jpeg" class="brand_logo" alt="Logo">
+					</div>
+				</div>
+				<div class="d-flex justify-content-center form_container"></div>
+					<div class="d-flex justify-content-center">	
+						<h4>Please register again with alternate e-mail</h4>
+					</div>
+					<div class="d-flex justify-content-center">	
+						<h4>OR contact <i style="color:blue;">mysoremulakanadu@gmail.com</i></h4>
+					</div>
+					<div class="d-flex justify-content-center mt-3 login_container">
+				 	        <button onclick="goBack()">Home</button>
+                        </div>
+             </div>
+				</div>
+			</div>
+		</div>
+	</div>
 <% } else{ %>  
 
 	<div class="container-fluid">
@@ -79,25 +111,25 @@
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input type="text" name="username" class="form-control input_user" value="" placeholder="username or email-id">
+							<input type="text" name="username" class="form-control input_user" value="" placeholder="username or email-id" required>
 						</div>
 						<div class="input-group mb-3">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input type="text" name="firstname" class="form-control input_user" value="" placeholder="Your first name">
+							<input type="text" name="firstname" class="form-control input_user" value="" placeholder="Your first name" required>
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input type="password" name="password" class="form-control input_pass"  placeholder="password">
+							<input type="password" name="password" class="form-control input_pass"  placeholder="password" required>
             </div>
             <div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input type="password" name="password2" class="form-control input_pass" placeholder="re-type password">
+							<input type="password" name="password2" class="form-control input_pass" placeholder="re-type password" required>
 						</div>
 						<div class="form-group">
 							<div class="custom-control custom-checkbox">
@@ -117,7 +149,7 @@
 						<strong>Already have an account?</strong> <a href="/login" class="ml-2"><strong>Login</strong></a>
 					</div>
 					<div class="d-flex justify-content-center links">
-            <a href="#">Forgot your password?</a>
+            <a href="/forgot">Forgot your password?</a>
           </div>
         </div>
         <div class="mt-4">
