@@ -374,13 +374,13 @@ var upload = multer({ storage: storage });
 app.post('/imageupload', upload.single('image'), async (req, res, next) => {
   console.log("Image post request by " + req.user.username);
 
-  await sharp('./public/images/' + req.file.filename).resize(150, 150)
-    .png({ quality: 100 }).toFile('./public/images/' + req.file.filename + '-thumb');
+  await sharp('./public/uploads/' + req.file.filename).resize(150, 150)
+    .png({ quality: 100 }).toFile('./public/uploads/' + req.file.filename + '-thumb');
 
   Member.findOneAndUpdate({ sabhe_id: req.body.sabhe_id },
     {
       img: {
-        data: fs.readFileSync(path.join('./public/images/' + req.file.filename + '-thumb')),
+        data: fs.readFileSync(path.join('./public/uploads/' + req.file.filename + '-thumb')),
         contentType: 'image/png'
       }
     }
@@ -390,13 +390,13 @@ app.post('/imageupload', upload.single('image'), async (req, res, next) => {
       }
       else {
         console.log("Image saved to database " + req.user.username);
-        fs.unlink('./public/images/' + req.file.filename, (err) => {
+        fs.unlink('./public/uploads/' + req.file.filename, (err) => {
           if (err) {
             console.error(err.message);
             return
           }
         });
-        fs.unlink('./public/images/' + req.file.filename + '-thumb', (err) => {
+        fs.unlink('./public/uploads/' + req.file.filename + '-thumb', (err) => {
           if (err) {
             console.error(err.message)
             return
