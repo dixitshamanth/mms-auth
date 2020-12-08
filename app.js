@@ -8,7 +8,7 @@ const passport = require("passport")
 const passportLocalMongoose = require("passport-local-mongoose")
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
-const members_for_db = require("./member_database");
+// const members_for_db = require("./member_database");
 
 require("dotenv").config()
 
@@ -30,7 +30,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+mongoose.connect(`${process.env.MONGO_URI}`, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
   if (err) {
     console.error(err.message)
   } else {
@@ -543,6 +543,11 @@ app.post('/login', function (req, res, next) {
   console.log("PLEASE RETURN TO HOMEPAGE")
 });
 
-app.listen(process.env.PORT || 3000, function () {
-  console.log("Server started on port 3000.");
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+
+app.listen(port, function () {
+  console.log("Server started successfully");
 });
