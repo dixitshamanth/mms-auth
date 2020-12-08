@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const session = require("express-session")
 const passport = require("passport")
 const passportLocalMongoose = require("passport-local-mongoose")
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
+// var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
 // const members_for_db = require("./member_database");
 
@@ -102,35 +102,35 @@ passport.deserializeUser(function (id, done) {
   });
 });
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/google/secrets",
-  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
-},
+// passport.use(new GoogleStrategy({
+//   clientID: process.env.CLIENT_ID,
+//   clientSecret: process.env.CLIENT_SECRET,
+//   callbackURL: "http://localhost:3000/auth/google/secrets",
+//   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+// },
 
-  function (accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      return cb(err, user);
-    });
-  }
-));
+//   function (accessToken, refreshToken, profile, cb) {
+//     User.findOrCreate({ googleId: profile.id }, function (err, user) {
+//       return cb(err, user);
+//     });
+//   }
+// ));
 
 app.get("/", function (req, res) {
   res.render("home", { iflogin: false, forgot: false, passwordmessage: "" });
   console.log("Home page")
 });
 
-app.get("/auth/google",
-  passport.authenticate('google', { scope: ["profile"] })
-);
+// app.get("/auth/google",
+//   passport.authenticate('google', { scope: ["profile"] })
+// );
 
-app.get("/auth/google/secrets",
-  passport.authenticate('google', { failureRedirect: "/" }),
-  function (req, res) {
-    res.redirect("/googlelogin");
-    console.log("Google login")
-  });
+// app.get("/auth/google/secrets",
+//   passport.authenticate('google', { failureRedirect: "/" }),
+//   function (req, res) {
+//     res.redirect("/googlelogin");
+//     console.log("Google login")
+//   });
 
 app.get("/login", function (req, res) {
   console.log("Login page")
@@ -172,19 +172,19 @@ app.get("/forgot", function (req, res) {
   res.render("home", { iflogin: false, forgot: true, passwordmessage: "" })
 })
 
-app.get("/googlelogin", function (req, res) {
-  if (req.isAuthenticated()) {
-    if (req.user.sabhe_id) {
-      res.redirect("/profile");
-    }
-    else {
-      res.redirect("/intermediate")
-    }
-  }
-  else {
-    res.redirect("/")
-  }
-})
+// app.get("/googlelogin", function (req, res) {
+//   if (req.isAuthenticated()) {
+//     if (req.user.sabhe_id) {
+//       res.redirect("/profile");
+//     }
+//     else {
+//       res.redirect("/intermediate")
+//     }
+//   }
+//   else {
+//     res.redirect("/")
+//   }
+// })
 
 app.get("/intermediate", function (req, res) {
   if (req.isAuthenticated()) {
