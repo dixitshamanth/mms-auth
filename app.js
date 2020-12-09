@@ -66,6 +66,7 @@ const memberSchema = new mongoose.Schema({
   introduction: String,
   if_deceased: String,
   date_deceased: String,
+  donations: [{ serial: Number, date: String, amount: Number }],
   img:
   {
     data: Buffer,
@@ -202,24 +203,22 @@ app.get("/logout", function (req, res) {
   res.redirect("/login")
 })
 
-app.get("/updateprofile", function (req, res) {
+app.post("/update", function (req, res) {
   if (req.isAuthenticated()) {
-    User.findById({ _id: req.user._id }, function (err, foundUser) {
+    // User.findById({ _id: req.user._id }, function (err, foundUser) {
+    //   if (err) {
+    //     res.send(err);
+    //     console.log(err.message);
+    //   }
+    //   else {
+    Member.findOne({ sabhe_id: req.body.sabhe_id }, function (err, foundMember) {
       if (err) {
-        res.send(err);
+        res.send("SOME ERROR OCCURED, PLEASE RETRY")
         console.log(err.message);
       }
       else {
-        Member.findOne({ sabhe_id: foundUser.sabhe_id }, function (err, foundMember) {
-          if (err) {
-            res.send("SOME ERROR OCCURED, PLEASE RETRY")
-            console.log(err.message);
-          }
-          else {
-            console.log("Update profile section accessed by " + foundMember.fullname);
-            res.render("profile", { member_details: foundMember, dates: dates, years: years, months: months, ifUpdate: true });
-          }
-        })
+        console.log("Update profile section accessed by " + req.user.username + " for " + foundMember.fullname);
+        res.render("profile", { member_details: foundMember, dates: dates, years: years, months: months, ifUpdate: true });
       }
     })
   }
@@ -264,6 +263,64 @@ app.post("/confirm", function (req, res) {
     }
   })
 });
+
+app.post("/donationadd", function (req, res) {
+  var sabhe_id = req.body.sabhe_id;
+
+
+  Member.findOneAndUpdate({ sabhe_id: sabhe_id },
+    {
+      $push: {
+        donations: {
+          serial: parseInt(req.body.serial),
+          date: req.body.date,
+          amount: parseInt(req.body.amount)
+        }
+      }
+    },
+    function (err) {
+      if (err) {
+        console.log(err.message);
+      }
+      console.log("Donation added by " + req.user.username);
+      if (req.user.isAdmin) {
+        res.redirect("/admin")
+      } else {
+        res.redirect("/profile");
+      }
+
+    }
+  )
+
+
+})
+
+app.post("/donationdelete", function (req, res) {
+  var sabhe_id = req.body.sabhe_id;
+
+  Member.findOneAndUpdate({ sabhe_id: sabhe_id },
+    {
+      $pull: {
+        donations: {
+          serial: req.body.serial
+        }
+      }
+    },
+    function (err) {
+      if (err) {
+        console.log(err.message);
+      }
+      console.log("Donation deleted by " + req.user.username);
+      if (req.user.isAdmin) {
+        res.redirect("/admin")
+      } else {
+        res.redirect("/profile");
+      }
+
+    }
+  )
+
+})
 
 app.post("/updateprofile", function (req, res) {
 
@@ -311,19 +368,23 @@ app.post("/updateprofile", function (req, res) {
     })
 });
 
-app.post("/adminupdate", function (req, res) {
-  var sabhe_id = req.body.sabhe_id;
-
-  Member.findOne({ sabhe_id: sabhe_id }, function (err, foundMember) {
-    if (err) {
-      res.send("SOME ERROR OCCURED, PLEASE RETRY");
-      console.log(err.message);
-    }
-    else {
-      console.log("Admin update for " + foundMember.fullname);
-      res.render("profile", { member_details: foundMember, dates: dates, years: years, months: months, ifUpdate: true });
-    }
-  })
+app.post("/profileforadmin", function (req, res) {
+  if (req.isAuthenticated()) {
+    var sabhe_id = req.body.sabhe_id;
+    Member.findOne({ sabhe_id: sabhe_id }, function (err, foundMember) {
+      if (err) {
+        res.send("SOME ERROR OCCURED, PLEASE RETRY");
+        console.log(err.message);
+      }
+      else {
+        console.log("Admin view for " + foundMember.fullname);
+        res.render("profile", { member_details: foundMember, ifUpdate: false });
+      }
+    })
+  }
+  else {
+    res.send("Not authorized")
+  }
 })
 
 app.post("/adminsearch", function (req, res) {
@@ -402,8 +463,11 @@ app.post('/imageupload', upload.single('image'), async (req, res, next) => {
             return
           }
         });
-
-        res.redirect("/profile")
+        if (req.user.isAdmin) {
+          res.redirect("/admin")
+        } else {
+          res.redirect("/profile");
+        }
       }
     }
   )
@@ -420,27 +484,27 @@ app.post("/register", function (req, res) {
 
   // If password not entered
   if (password1 == '') {
-    res.render("home", { iflogin: false, passwordmessage: "Please choose a password" });
+    res.render("home", { iflogin: false, forgot: false, passwordmessage: "Please choose a password" });
   }
   // If confirm password not entered
   else if (password1 == '') {
-    res.render("home", { iflogin: false, passwordmessage: "Please re-type your password" });
+    res.render("home", { iflogin: false, forgot: false, passwordmessage: "Please re-type your password" });
   }
   // If Not same return False.
   else if (password2 != password1) {
-    res.render("home", { iflogin: false, passwordmessage: "Passwords don't match" });
+    res.render("home", { iflogin: false, forgot: false, passwordmessage: "Passwords don't match" });
 
   }
 
   else if (username == '') {
-    res.render("home", { iflogin: false, passwordmessage: "Please enter a username (email-id)" });
+    res.render("home", { iflogin: false, forgot: false, passwordmessage: "Please enter a username (email-id)" });
   }
 
   else {
     User.register({ username: req.body.username }, req.body.password, function (err, user) {
       if (err) {
         console.log(err.message)
-        res.render("home", { iflogin: false, passwordmessage: err.message });
+        res.render("home", { iflogin: false, forgot: false, passwordmessage: err.message });
       } else {
         passport.authenticate("local")(req, res, function () {
           console.log("New user registered " + req.user.username);

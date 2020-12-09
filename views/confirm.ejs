@@ -23,8 +23,8 @@
                         <div class="d-flex justify-content-center">
                             <h5 style="font-family: 'Hind Vadodara';">Name: <span class="colorspan"><%=user.fullname%></span></h5>
                         </div>
-						<div class="d-flex justify-content-left">
-                            <p style="font-family: 'Hind Vadodara';"> Address: <span class="colorspan"><%=  user.address+", "+user.city+"-"+user.pincode %></span></p>
+						<div class="d-flex justify-content-center">
+                            <p style="font-family: 'Hind Vadodara'; text-align: center;"> Address: <span class="colorspan"><%=  user.address+", "+user.city+"-"+user.pincode %></span></p>
                         </div><input type="hidden" name="sabhe_id" value="<%=user.sabhe_id %>">
 						<div class="d-flex justify-content-center mt-3 login_container">
 				 	        <button style="width:70%" type="submit" name="button" class="btn login_btn">Yes, confirm</button>

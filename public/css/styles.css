@@ -28,9 +28,16 @@ h1.myheading {
 	/* padding-left: 150px; */
 }
 
-.table-bordered{
-	border-color:black;
+.table{
+	border: 1px solid black;
 }
+
+.table td, .table th, .table thead th{
+	border: 1px solid black;
+	text-align: center;
+	
+}
+
 .myh4 {
 	position: relative;
 	top: 90px;
