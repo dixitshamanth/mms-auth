@@ -175,6 +175,10 @@
 				<div class="d-flex justify-content-center form_container" style="margin-top: 5px;">
                     <form action="/updateprofile" method="POST" style="width:400px">
                         <input type="hidden" name="sabhe_id" value="<%=member_details.sabhe_id %>">
+                        <label style="text-align: left;" >Title:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="title" value="<%= member_details.title %>" required>
+                        </div>
                         <label style="text-align: left;" >Name:</label>
 						<div class="input-group mb-3">
                             <input type="text" class="form-control" name="fullname" value="<%= member_details.fullname %>">

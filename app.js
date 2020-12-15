@@ -71,7 +71,8 @@ const memberSchema = new mongoose.Schema({
   {
     data: Buffer,
     contentType: String
-  }
+  },
+  lastModified: Date
 })
 
 var dates = [];
@@ -351,7 +352,8 @@ app.post("/updateprofile", function (req, res) {
       date_of_birth: date_of_birth,
       month_of_birth: month_of_birth,
       year_of_birth: year_of_birth,
-      introduction: introduction
+      introduction: introduction,
+      lastModified: Date.now()
     }
     , function (err) {
       if (err) {
@@ -416,6 +418,75 @@ app.post("/adminsearch", function (req, res) {
   })
 
 })
+
+app.get("/lastModified", function (req, res) {
+
+  if (req.isAuthenticated() && req.user.isAdmin === true) {
+
+    Member.find({
+      lastModified: {
+        $exists: true
+      }
+    },
+      null, { sort: { lastModified: 'descending' } },
+      function (err, foundMembers) {
+        if (err) {
+          res.redirect("/admin");
+          console.log(err.message)
+        }
+        else {
+          console.log("Admin searched");
+          res.render("admin", { wholeList: foundMembers });
+        }
+      })
+  } else {
+    res.redirect("/");
+  }
+})
+
+app.post("/addMember", function (req, res) {
+  if (req.isAuthenticated() && req.user.isAdmin == true) {
+    var newMember = {
+      fullname: req.body.fullname,
+      address: req.body.address,
+      city: req.body.city,
+      pincode: req.body.pincode,
+      landline: req.body.landline,
+      mobile: req.body.mobile,
+      email_id: req.body.email_id,
+      gothra: req.body.gothra,
+      date_of_birth: req.body.date_of_birth,
+      month_of_birth: req.body.month_of_birth,
+      year_of_birth: req.body.year_of_birth,
+      introduction: req.body.introduction,
+      sabhe_id: req.body.sabhe_id
+    }
+    Member.create(newMember, function (err, insertedMember) {
+      if (err) {
+        console.log(err.message)
+        res.redirect("/addMember")
+      }
+      else {
+        console.log("New member added by admin")
+        res.redirect("/admin")
+      }
+    })
+  }
+  else {
+    res.redirect("/")
+  }
+})
+
+app.get("/addMember", function (req, res) {
+  if (req.isAuthenticated() && req.user.isAdmin == true) {
+    res.render("add", { dates: dates, years: years, months: months })
+  } else {
+    res.redirect("/")
+  }
+
+})
+
+
 
 var fs = require('fs');
 var path = require('path');

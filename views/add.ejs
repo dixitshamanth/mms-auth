@@ -1,0 +1,96 @@
+<%- include('partials/header') %>
+<h1 class="myheading"> Mysuru Mulakanadu Sabha®</h1>
+
+
+
+<h2 class="myh2">Admin - Member add</h2>
+	<div class="container-fluid">
+		<div class="d-flex row justify-content-center">
+            <div class="user_card mx-5 px-3 mt-2 col-md-4">
+                <div class="d-flex justify-content-center">
+                    <h5 class="myh5">Enter new member details</h5>
+                </div>
+				<div class="d-flex justify-content-center form_container" style="margin-top: 5px;">
+                    <form action="/addMember" method="POST" style="width:400px">
+                        <label style="text-align: left;" >Membership number:</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="sabhe_id" required>
+                        </div>
+                        <label style="text-align: left;" >Title:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <label style="text-align: left;" >Name:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="fullname" required>
+                        </div>
+                        <label style="text-align: left;" >Address:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="address" >
+                        </div>
+                        <label style="text-align: left;" >City:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="city">
+                        </div>
+                        <label style="text-align: left;" >Pincode:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="pincode">
+                        </div>
+                        <label style="text-align: left;" >Landline:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="landline" >
+                        </div>
+                        <label style="text-align: left;" >Mobile:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="mobile">
+                        </div>
+                        <label style="text-align: left;" >E-mail id:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="email_id">
+                        </div>
+                        <label style="text-align: left;" >Gothra:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="gothra">
+                        </div>
+                        <label style="text-align: left;" >Birth date</label>
+						<div class="input-group mb-3">
+                            <select class="form-control" name="date_of_birth">
+                                   
+                                <% dates.forEach(function(date){ %>
+                                    <option value="<%=date%>"> <%=date%> </option>
+                                <%})%>
+                            </select>
+                        </div>
+                        <label style="text-align: left;" >Birth Month</label>
+						<div class="input-group mb-3">
+                            <select class="form-control" name="month_of_birth">
+                                
+                                <% months.forEach(function(month){ %>
+                                    <option value="<%=month%>"> <%=month%> </option>
+                                <%})%>
+                            </select>
+                        </div>
+                         <label style="text-align: left;" >Year of birth</label>
+						<div class="input-group mb-3">
+                            <select class="form-control" name="year_of_birth">
+                                
+                                <% years.forEach(function(year){ %>
+                                    <option value="<%=year%>"> <%=year%> </option>
+                                <%})%>
+                            </select>
+                        </div>
+                        <label style="text-align: left;" >Self-introduction:</label>
+						<div class="input-group mb-3">
+                            <input type="text" class="form-control" name="introduction" >
+                        </div>
+							<div class="d-flex justify-content-center my-4 login_container" >
+				 	            <button type="submit" name="button" class="btn login_btn">Add</button>
+                            </div>
+                            <div class="d-flex justify-content-center my-4 login_container" >
+                        <a href="/logout"><button type="button" name="button" class="btn-md">Logout</button></a>
+                    </div>
+                    </form>
+                    
+                </div> 
+                </div>
+    </div>
