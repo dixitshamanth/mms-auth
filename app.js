@@ -230,6 +230,8 @@ app.post("/update", function (req, res) {
 
 app.get("/admin", function (req, res) {
 
+
+
   Member.find({}, null, { sort: { sabhe_id: 'ascending' } }, function (err, allUsersList) {
     if (err) {
       res.send(err);
@@ -238,7 +240,9 @@ app.get("/admin", function (req, res) {
 
       if (req.isAuthenticated() && req.user.isAdmin === true) {
         console.log("Admin page accessed")
-        res.render("admin", { wholeList: allUsersList })
+        var addedFlag = req.query.added;
+        if (addedFlag === "yes") res.render("admin", { wholeList: allUsersList, added: true })
+        else res.render("admin", { wholeList: allUsersList, added: false })
       }
       else {
         res.redirect("/");
@@ -246,6 +250,8 @@ app.get("/admin", function (req, res) {
 
     }
   })
+
+
 
 });
 
@@ -447,6 +453,7 @@ app.get("/lastModified", function (req, res) {
 app.post("/addMember", function (req, res) {
   if (req.isAuthenticated() && req.user.isAdmin == true) {
     var newMember = {
+      sl_no: req.body.sl_no,
       fullname: req.body.fullname,
       address: req.body.address,
       city: req.body.city,
@@ -468,7 +475,9 @@ app.post("/addMember", function (req, res) {
       }
       else {
         console.log("New member added by admin")
-        res.redirect("/admin")
+        var flag = encodeURIComponent('yes');
+        res.redirect('/admin?added=' + flag);
+        // res.redirect("/admin")
       }
     })
   }

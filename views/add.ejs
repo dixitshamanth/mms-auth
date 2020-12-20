@@ -12,13 +12,17 @@
                 </div>
 				<div class="d-flex justify-content-center form_container" style="margin-top: 5px;">
                     <form action="/addMember" method="POST" style="width:400px">
+                        <label style="text-align: left;" >Serial number:</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="sl_no" placeholder="Look into the last serial # in database for reference">
+                        </div>
                         <label style="text-align: left;" >Membership number:</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="sabhe_id" required>
+                            <input type="text" class="form-control" name="sabhe_id" placeholder="Example format MMS1111"required>
                         </div>
                         <label style="text-align: left;" >Title:</label>
 						<div class="input-group mb-3">
-                            <input type="text" class="form-control" name="title" required>
+                            <input type="text" class="form-control" name="title" placeholder="Sri, Smt, Dr. etc" required>
                         </div>
                         <label style="text-align: left;" >Name:</label>
 						<div class="input-group mb-3">
@@ -55,7 +59,7 @@
                         <label style="text-align: left;" >Birth date</label>
 						<div class="input-group mb-3">
                             <select class="form-control" name="date_of_birth">
-                                   
+                                   <option value=""> - </option>
                                 <% dates.forEach(function(date){ %>
                                     <option value="<%=date%>"> <%=date%> </option>
                                 <%})%>
@@ -64,7 +68,7 @@
                         <label style="text-align: left;" >Birth Month</label>
 						<div class="input-group mb-3">
                             <select class="form-control" name="month_of_birth">
-                                
+                                    <option value=""> - </option>
                                 <% months.forEach(function(month){ %>
                                     <option value="<%=month%>"> <%=month%> </option>
                                 <%})%>
@@ -73,7 +77,7 @@
                          <label style="text-align: left;" >Year of birth</label>
 						<div class="input-group mb-3">
                             <select class="form-control" name="year_of_birth">
-                                
+                                    <option value=""> - </option>
                                 <% years.forEach(function(year){ %>
                                     <option value="<%=year%>"> <%=year%> </option>
                                 <%})%>
@@ -92,5 +96,8 @@
                     </form>
                     
                 </div> 
-                </div>
+            </div>
+        </div>
     </div>
+
+    <%- include('partials/footer') %>

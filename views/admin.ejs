@@ -2,6 +2,7 @@
 <h1 class="myheading"> Mysuru Mulakanadu Sabha®</h1>
 <h2 style="padding:5px;" class="myh2">Admin options</h2>
 
+
 <div class="container-fluid">
 		<div class="d-flex row justify-content-center">
       <div style="width: 400px;" class="user_card mx-5 px-3">
@@ -108,6 +109,11 @@
                     </tbody>
                     </table>
 
-          
+  <% if(added) { %>
+<script>
+  addedMessage();
+</script>
+
+<% } %>
 
 <%- include('partials/footer') %>
