@@ -419,7 +419,7 @@ app.post("/adminsearch", function (req, res) {
     }
     else {
       console.log("Admin searched");
-      res.render("admin", { wholeList: foundMembers });
+      res.render("admin", { wholeList: foundMembers, added: false });
     }
   })
 
@@ -442,7 +442,7 @@ app.get("/lastModified", function (req, res) {
         }
         else {
           console.log("Admin searched");
-          res.render("admin", { wholeList: foundMembers });
+          res.render("admin", { wholeList: foundMembers, added: false });
         }
       })
   } else {
