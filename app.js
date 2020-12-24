@@ -516,6 +516,7 @@ app.post('/imageupload', upload.single('image'), async (req, res, next) => {
   console.log("Image post request by " + req.user.username);
 
   await sharp('./public/uploads/' + req.file.filename).resize(150, 150)
+    .rotate()
     .png({ quality: 100 }).toFile('./public/uploads/' + req.file.filename + '-thumb');
 
   Member.findOneAndUpdate({ sabhe_id: req.body.sabhe_id },
