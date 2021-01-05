@@ -331,6 +331,7 @@ app.post("/donationdelete", function (req, res) {
 
 app.post("/updateprofile", function (req, res) {
 
+  var title = req.body.title
   var fullname = req.body.fullname
   var address = req.body.address
   var city = req.body.city
@@ -348,6 +349,7 @@ app.post("/updateprofile", function (req, res) {
   Member.findOneAndUpdate({ sabhe_id: sabhe_id },
     {
       fullname: fullname,
+      title: title,
       address: address,
       city: city,
       pincode: pincode,
@@ -454,6 +456,7 @@ app.post("/addMember", function (req, res) {
   if (req.isAuthenticated() && req.user.isAdmin == true) {
     var newMember = {
       sl_no: req.body.sl_no,
+      title: req.body.title,
       fullname: req.body.fullname,
       address: req.body.address,
       city: req.body.city,
